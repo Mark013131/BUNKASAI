@@ -1,6 +1,7 @@
 import pygame as pg, sys
 import random
 import os
+import requests
 
 def send_score(player_name, score):
     url = 'https://scores.shieru-lab.com/'  # データを送信するURL
@@ -25,7 +26,7 @@ def send_score(player_name, score):
 
     except requests.exceptions.RequestException as e:
         print(f"エラーが発生しました: {e}")
-        
+
 # プレイヤー名の入力
 player_name = input("プレイヤー名を入力してください: ")
 
@@ -203,9 +204,18 @@ def gamestage():
     text = font.render("SCORE: " + str(score), True, pg.Color("WHITE"))
     screen.blit(text, (20, 20))
 
+# グローバル変数を追加
+score_sent = False  # スコアが送信されたかどうかのフラグ
+
 # ゲームクリア画面を表示する関数
 def congratulations():
+    global score, page, score_sent
     screen.fill(pg.Color("NAVY"))
+
+     # スコアを送信（まだ送信されていない場合）
+    if not score_sent:
+        send_score(player_name, score)  # プレイヤー名とスコアを送信
+        score_sent = True  # スコアが送信されたことを記録
     
     # 背景画像の表示
     congrats_img = load_image("images/Congratulations.png", (886, 600))
@@ -248,8 +258,14 @@ def gamereset():
 
 # ゲームオーバー
 def gameover():
+    global score, page, score_sent
     screen.fill(pg.Color("NAVY"))
-    
+
+     # スコアを送信（まだ送信されていない場合）
+    if not score_sent:
+        send_score(player_name, score)  # プレイヤー名とスコアを送信
+        score_sent = True  # スコアが送信されたことを記録
+
     # GAMEOVERのテキスト表示
     font = pg.font.Font(None, 150)
     text = font.render("GAMEOVER", True, pg.Color("RED"))
