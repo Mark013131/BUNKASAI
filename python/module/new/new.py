@@ -2,6 +2,30 @@ import pygame as pg, sys
 import random
 import os
 
+def send_score(player_name, score):
+    url = 'https://scores.shieru-lab.com/'  # データを送信するURL
+    data = {
+        'name': player_name,
+        'score': score,
+        'type': "SHOOTING", 
+        'metadata': {}  # メタデータは空の辞書で送信
+    }
+
+    print(f"送信するデータ: {data}")  # デバッグメッセージを追加
+
+    try:
+        # POSTリクエストでデータを送信
+        response = requests.post(url, json=data)  # JSON形式で送信
+
+        # 成功メッセージの表示
+        if response.status_code == 200:
+            print(f"スコアが正常に送信されました: {response.text}")
+        else:
+            print(f"スコア送信に失敗しました: {response.status_code} - {response.text}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"エラーが発生しました: {e}")
+        
 # プレイヤー名の入力
 player_name = input("プレイヤー名を入力してください: ")
 
